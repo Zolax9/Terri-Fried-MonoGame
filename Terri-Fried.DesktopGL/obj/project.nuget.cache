@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "XWKb1G2BGfRXom4uOnMCJc7sOGCJ8+Y9RYSaCI6jOUhjDoNs14wAr0hfHP1iBAa7oDem+dLnsZVdRhs3b1Rbfw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.DesktopGL\\Terri-Fried.DesktopGL.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vukil\\.nuget\\packages\\monogame.content.builder.task\\3.8.0.1641\\monogame.content.builder.task.3.8.0.1641.nupkg.sha512",
+    "C:\\Users\\vukil\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.0.1641\\monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512"
+  ],
+  "logs": []
+}
