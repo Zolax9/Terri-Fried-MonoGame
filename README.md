@@ -11,9 +11,9 @@ The main difference between the older version [here](https://github.com/Zolax9/T
 
 # Screenshots
 # Windows (DesktopGL)
-![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot1.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot2.png)![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot3.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot4.png)
+![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot1.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot2.png)![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot3.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot4.png)
 # Android
-![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot5.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot6.png)![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot7.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/accurate/screenshots/screenshot8.png)
+![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot5.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot6.png)![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot7.png) ![](https://github.com/Zolax9/Terri-Fried-MonoGame/blob/enhanced/screenshots/screenshot8.png)
 
 # Known Issues
 * The font sizes in MonoGame are slightly different from Raylib
