@@ -8,6 +8,11 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <PackageId></PackageId>
+    <Authors>Zolax9</Authors>
+    <Company />
+    <Product>Terri-Fried</Product>
+    <Version>1.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />
@@ -22,7 +27,7 @@
       </EmbeddedResource>
     </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="..\Terri-Fried\Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />

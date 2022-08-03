@@ -5,12 +5,13 @@ using System;
 
 namespace Terri_Fried.Android
 {
-    // All extra functionality for compatibility with Terri-Fried (pressed and released bools (touchscreen), touch position, code to scale to screen, DrawLineEx())
+    // This class contains all extra functionality for compatibility with Terri-Fried (pressed and released bools (touchscreen), touch position, code to scale to screen, DrawLineEx())
     public class Extra
     {
-        public RaylibMouseState raylibMouseState; // Stores the mouse state and substitutes non-existent Raylib mouse functions (see function comments for description)
-        Texture2D pixel; // Stores the texture used to create a line through the DrawLineEx() function
+        public RaylibMouseState gameRBMouseState; // Stores the game's mouse state and substitutes non-existent Raylib mouse functions (see function comments for description)
+        public RaylibMouseState rbMouseState; // Stores the actual mouse state and substitutes non-existent Raylib mouse functions (see function comments for description)
 
+        Texture2D pixel; // Stores the texture used to create a line through the DrawLineEx() function
         public float aspectMultiplier; // Contains the multiplier needed to fit the actual game window onto the screen
         int displayWidth; // Width of the actual screen
         int displayHeight; // Height of the actual screen
@@ -28,29 +29,32 @@ namespace Terri_Fried.Android
             screenHeight = this.screenHeight;
             aspectMultiplier = (float)displayWidth / this.screenWidth; // Declares the multiplier needed to fit the Terri-Fried instance to the screen
             
-            // Changes the touch positions to use the bounds of Terri-Fried rather than the actual screen bounds
-            TouchPanel.DisplayWidth = screenWidth;
-            TouchPanel.DisplayHeight = this.screenHeight;
-
             pixel = new Texture2D(_graphicsDevice, 1, 1);
             pixel.SetData(new Color[1] { new Color(new Vector4(.906f, .847f, .788f, 1.0f)) }); // Only colour used for lines (constantly creating textures is very slow)
 
-            raylibMouseState = new RaylibMouseState();
+            gameRBMouseState = new RaylibMouseState((float)screenWidth / displayWidth, (float)screenHeight / displayHeight);
+            rbMouseState = new RaylibMouseState((float)screenWidth / displayWidth, (float)screenHeight / displayHeight);
         }
 
-        public void Update()
+        public void Update(bool paused)
         {
-            raylibMouseState.Update();
-            raylibMouseState.touchCollState = TouchPanel.GetState();
+            rbMouseState.Update();
+            rbMouseState.touchCollState = TouchPanel.GetState();
+            if (!paused)
+            {
+                gameRBMouseState.Update();
+                gameRBMouseState.touchCollState = TouchPanel.GetState();
+            }
         }
 
-        public void Draw(GraphicsDevice _graphicsDevice, SpriteBatch _spriteBatch, RenderTarget2D rt)
+        public void Draw(GraphicsDevice _graphicsDevice, SpriteBatch _spriteBatch, RenderTarget2D rt, RenderTarget2D pauseMenu, bool paused)
         {
             _graphicsDevice.SetRenderTarget(null); // Renders all sprites in rt to screen
             _graphicsDevice.Clear(Color.Gray); // Any gaps in the screen show a grey border
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp); // Prevents anti-aliasing
             _spriteBatch.Draw(rt, new Rectangle((displayWidth - (int)(screenWidth * aspectMultiplier)) / 2, (displayHeight - (int)(screenHeight * aspectMultiplier)) / 2, (int)(screenWidth * aspectMultiplier), (int)(screenHeight * aspectMultiplier)), new Rectangle(0, 0, screenWidth, screenHeight), Color.White); // Draws the rt to fit to the screen
+            if (paused) { _spriteBatch.Draw(pauseMenu, new Rectangle(0, 0, (int)(screenWidth * aspectMultiplier), (int)(screenHeight * aspectMultiplier)), Color.White); } // Adds fade effect to screen
             _spriteBatch.End();
         }
 

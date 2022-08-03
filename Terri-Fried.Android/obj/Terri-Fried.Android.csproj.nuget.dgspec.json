@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj": {}
+    "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj": {}
   },
   "projects": {
-    "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj": {
+    "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
+        "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
         "projectName": "Terri-Fried.Android",
-        "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
+        "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
         "packagesPath": "C:\\Users\\vukil\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\obj\\",
+        "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [
@@ -32,8 +32,8 @@
         "frameworks": {
           "monoandroid10.0": {
             "projectReferences": {
-              "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj": {
-                "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj"
+              "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj": {
+                "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj"
               }
             }
           }
@@ -54,14 +54,14 @@
         }
       }
     },
-    "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj": {
+    "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj",
+        "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj",
         "projectName": "Terri-Fried",
-        "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj",
+        "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj",
         "packagesPath": "C:\\Users\\vukil\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\obj\\",
+        "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"

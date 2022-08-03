@@ -21,8 +21,8 @@ namespace Terri_Fried.DesktopGL
                             Up = false;
                             Down = true;
                             break;
-                        
-                        default:
+
+                        case ButtonState.Released:
                             Released = true;
                             
                             Up = true;

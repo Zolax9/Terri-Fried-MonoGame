@@ -194,13 +194,13 @@
     "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.DesktopGL\\Terri-Fried.DesktopGL.csproj",
+      "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.DesktopGL\\Terri-Fried.DesktopGL.csproj",
       "projectName": "Terri-Fried.DesktopGL",
-      "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.DesktopGL\\Terri-Fried.DesktopGL.csproj",
+      "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.DesktopGL\\Terri-Fried.DesktopGL.csproj",
       "packagesPath": "C:\\Users\\vukil\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.DesktopGL\\obj\\",
+      "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.DesktopGL\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
@@ -221,8 +221,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj": {
-              "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj"
+            "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj": {
+              "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj"
             }
           }
         }

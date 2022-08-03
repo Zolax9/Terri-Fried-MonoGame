@@ -140,3 +140,27 @@
 /processorParam:TextureFormat=Color
 /build:../../Terri-Fried/Content/resources/splash_egg.png;resources/splash_egg.png
 
+#begin ../../Terri-Fried/Content/resources/pause.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Terri-Fried/Content/resources/pause.png;resources/pause.png
+
+#begin ../../Terri-Fried/Content/resources/bg_fade.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../Terri-Fried/Content/resources/bg_fade.png;resources/bg_fade.png
+

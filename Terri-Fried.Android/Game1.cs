@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -16,14 +15,53 @@ namespace Terri_Fried.Android
         // Added variables
         Extra ex; // Contains all extra functions
         RenderTarget2D rt; // Contains everything rendered so it can be scaled to screen
+        RenderTarget2D pauseMenu; // Contains the pause menu (paused text and background)
         IsolatedStorageFile saveData; // Stores all saved data (just the highscore)
+
         int displayWidth;
         int displayHeight;
+
+        bool unpauseNextFrame; // Unpauses the game the frame after it was paused (prevents click being applied to game)
+        bool pauseMouseDown; // If the mouse is still pressed after pausing (prevents click being applied to game)
+        bool _paused; // If the game is paused
+        bool paused
+        {
+            get { return _paused; }
+            set
+            {
+                switch (value)
+                {
+                    case true:
+                        fxLaunch.Pause();
+                        fxClick.Pause();
+                        fxDeath.Pause();
+                        fxCoin.Pause();
+                        fxSplash.Pause();
+                        fxSelect.Pause();
+                        break;
+
+                    default:
+                        // .Resume() function would play sound if not played
+                        if (fxLaunch.State == SoundState.Paused) { fxLaunch.Resume(); }
+                        if (fxClick.State == SoundState.Paused) { fxClick.Resume(); }
+                        if (fxDeath.State == SoundState.Paused) { fxDeath.Resume(); }
+                        if (fxCoin.State == SoundState.Paused) { fxCoin.Resume(); }
+                        if (fxSplash.State == SoundState.Paused) { fxSplash.Resume(); }
+                        if (fxSelect.State == SoundState.Paused) { fxSelect.Resume(); }
+                        break;
+                }
+                _paused = value;
+            }
+        }
+
+        Texture2D fadeTexture;
+        Texture2D pauseTexture;
+        Rectangle pauseRect;
 
         // Terri-Fried variables
         const double pi = 3.1415926535897;
         const int gravity = 1;
-        int screenWidth = 800;
+        const int screenWidth = 800;
         int screenHeight = 450;
 
         Platform[] platforms;
@@ -31,8 +69,8 @@ namespace Terri_Fried.Android
 
         int scoreInt = 0;
         int highscoreInt = 0;
-        string score;  // Changed from 32-element char array to string (easier to deal with in C#)
-        string highscore; // Changed from 32-element char array to string (easier to deal with in C#)
+        string score;
+        string highscore;
 
         bool titleScreen = true;
         bool playCoinFX = false;
@@ -46,13 +84,13 @@ namespace Terri_Fried.Android
         bool playedSplash = false;
         bool playedSelect = false;
 
-        Texture2D playerSprite;
-        Texture2D lavaSprite;
-        Texture2D platformSprite;
-        Texture2D coinSprite;
-        Texture2D scoreBoxSprite;
-        Texture2D logo;
-        Texture2D splashEggSprite;
+        Texture2D playerTexture;
+        Texture2D lavaTexture;
+        Texture2D platformTexture;
+        Texture2D coinTexture;
+        Texture2D scoreBoxTexture;
+        Texture2D logoTexture;
+        Texture2D splashEggTexture;
 
         SoundEffectInstance fxLaunch;
         SoundEffectInstance fxClick;
@@ -69,14 +107,16 @@ namespace Terri_Fried.Android
             IsMouseVisible = true;
 
             IsFixedTimeStep = true;
-            TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d); // Represents SetTargetFPS(60);
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
         }
 
         protected override void Initialize()
         {
             displayWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             displayHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
             ex = new Extra(GraphicsDevice, displayWidth, displayHeight, screenWidth, ref screenHeight); // Changes screen height as well (see Extra class)
+            rt = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             saveData = IsolatedStorageFile.GetUserStoreForDomain(); // Gets all save files (just highscore)
 
             lavaY = screenHeight - 32;
@@ -102,7 +142,6 @@ namespace Terri_Fried.Android
                     sr.Close();
                 }
             }
-
             highscore = string.Format("BEST: {0}", highscoreInt);
 
             resetScore();
@@ -114,23 +153,27 @@ namespace Terri_Fried.Android
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            playerSprite = Content.Load<Texture2D>("resources/egg");
-            lavaSprite = Content.Load<Texture2D>("resources/lava");
-            platformSprite = Content.Load<Texture2D>("resources/platform");
-            coinSprite = Content.Load<Texture2D>("resources/coin");
-            scoreBoxSprite = Content.Load<Texture2D>("resources/scorebox");
-            logo = Content.Load<Texture2D>("resources/logo");
-            splashEggSprite = Content.Load<Texture2D>("resources/splash_egg");
+            playerTexture = Content.Load<Texture2D>("resources/egg");
+            lavaTexture = Content.Load<Texture2D>("resources/lava");
+            platformTexture = Content.Load<Texture2D>("resources/platform");
+            coinTexture = Content.Load<Texture2D>("resources/coin");
+            scoreBoxTexture = Content.Load<Texture2D>("resources/scorebox");
+            logoTexture = Content.Load<Texture2D>("resources/logo");
+            splashEggTexture = Content.Load<Texture2D>("resources/splash_egg");
+
+            fadeTexture = Content.Load<Texture2D>("resources/bg_fade");
+            pauseTexture = Content.Load<Texture2D>("resources/pause");
+            pauseRect = new Rectangle(screenWidth - pauseTexture.Width, 0, pauseTexture.Width, pauseTexture.Height);
 
             fxLaunch = Content.Load<SoundEffect>("resources/launch").CreateInstance();
             fxClick = Content.Load<SoundEffect>("resources/click").CreateInstance();
             fxDeath = Content.Load<SoundEffect>("resources/die").CreateInstance();
-            fxCoin = Content.Load<SoundEffect>("resources/fxCoin").CreateInstance(); // coin.wav renamed to fxCoin to prevent overwrite by coin.png (file extensions are removed)
+            fxCoin = Content.Load<SoundEffect>("resources/fxCoin").CreateInstance();
             fxSplash = Content.Load<SoundEffect>("resources/splash").CreateInstance();
             fxSelect = Content.Load<SoundEffect>("resources/select").CreateInstance();
+
             font = Content.Load<SpriteFont>("resources/font");
 
-            // SetMasterVolume(0.3f); All sound effects are set individually
             fxLaunch.Volume = 0.3f;
             fxClick.Volume = 0.3f;
             fxDeath.Volume = 0.3f;
@@ -138,89 +181,119 @@ namespace Terri_Fried.Android
             fxSplash.Volume = 0.3f;
             fxSelect.Volume = 0.3f;
 
-            // Unloading content is already done by C# (managed)
+            pauseMouseDown = false;
+            paused = false;
         }
 
         protected override void Update(GameTime gameTime)
         {
-            ex.Update(); // Updates extra functions
+            ex.Update(paused); // Updates extra functions
 
-            if (titleScreen)
+            unpauseNextFrame = false;
+            if (!titleScreen)
             {
-                if (splashTimer > 120)
+                if (ex.rbMouseState.Pressed && pauseRect.Contains(new Point(ex.rbMouseState.X, ex.rbMouseState.Y))) { pauseGame(false); } // If the screen is touched at the pause button area
+            }
+            if (pauseMouseDown)
+            {
+                // Prevents pressing of touch from escaping pause menu to game
+                ex.gameRBMouseState.Down = false;
+                ex.gameRBMouseState.Pressed = false;
+
+                if (ex.rbMouseState.Released)
                 {
-                    if (!playedSelect)
-                    {
-                        fxSelect.Play();
-                        playedSelect = true;
-                    }
-                    if (ex.raylibMouseState.Down)
-                    {
-                        fxSelect.Play();
-                        titleScreen = false;
-                        mouseDownX = ex.raylibMouseState.X;
-                        mouseDownY = ex.raylibMouseState.Y;
-                    }
-                }
-                else
-                {
-                    if (!playedSplash)
-                    {
-                        fxSplash.Play();
-                        playedSplash = true;
-                    }
-                    splashTimer += 1;
+                    // Prevents releasing of touch from escaping pause menu to game
+                    ex.gameRBMouseState.Up = false;
+                    ex.gameRBMouseState.Released = false;
+                    pauseMouseDown = false;
                 }
             }
-            else
+
+            switch (titleScreen)
             {
-
-
-                if (playCoinFX)
-                {
-                    fxCoin.Play();
-                    playCoinFX = false;
-                }
-                if (ex.raylibMouseState.Pressed && player.isOnGround())
-                {
-                    fxClick.Play();
-                    mouseDownX = ex.raylibMouseState.X;
-                    mouseDownY = ex.raylibMouseState.Y;
-                }
-                if (ex.raylibMouseState.Released && player.isOnGround())
-                {
-                    if (firstTime)
+                case true:
+                    switch (splashTimer > 120)
                     {
-                        firstTime = false;
+                        case true:
+                            if (!playedSelect)
+                            {
+                                fxSelect.Play();
+                                playedSelect = true;
+                            }
+                            if (ex.gameRBMouseState.Down)
+                            {
+                                fxSelect.Play();
+                                titleScreen = false;
+                                mouseDownX = ex.gameRBMouseState.X;
+                                mouseDownY = ex.gameRBMouseState.Y;
+                            }
+                            break;
+
+                        default:
+                            if (!playedSplash)
+                            {
+                                fxSplash.Play();
+                                playedSplash = true;
+                            }
+                            splashTimer += 1;
+                            break;
                     }
-                    else
+                    break;
+
+                default:
+                    if (!paused)
                     {
-                        fxLaunch.Play();
-                        if (player.isOnPlatform())
+                        if (playCoinFX)
                         {
-                            player.setY(player.getY() - 1d);
+                            fxCoin.Play();
+                            playCoinFX = false;
                         }
-                        int velocityX = ex.raylibMouseState.X - mouseDownX;
+                        if (ex.gameRBMouseState.Pressed && player.isOnGround())
+                        {
+                            fxClick.Play();
+                            mouseDownX = ex.gameRBMouseState.X;
+                            mouseDownY = ex.gameRBMouseState.Y;
+                        }
+                        if (ex.gameRBMouseState.Released && player.isOnGround())
+                        {
+                            if (firstTime)
+                            {
+                                firstTime = false;
+                            }
+                            else
+                            {
+                                fxLaunch.Play();
+                                if (player.isOnPlatform())
+                                {
+                                    player.setY(player.getY() - 1d);
+                                }
 
-                        int velocityY = ex.raylibMouseState.Y - mouseDownY;
+                                int velocityX = ex.gameRBMouseState.X - mouseDownX;
+                                int velocityY = ex.gameRBMouseState.Y - mouseDownY;
+                                player.setVelocity(velocityX * .08, velocityY * .08);
+                            }
+                        }
 
-                        player.setVelocity((double)velocityX * .08, (double)velocityY * .08);
+                        checkPlayerCollision();
+                        player.updatePosition();
+
+                        if (player.getY() > screenHeight)
+                        {
+                            fxDeath.Play();
+                            resetGame();
+                        }
+
+                        for (int i = 0; i < 4; ++i)
+                        {
+                            platforms[i].updatePosition();
+                        }
+
+                        lavaY = screenHeight - 43 - Math.Sin(timer) * 5;
+                        timer += 0.05;
                     }
-                }
-                checkPlayerCollision();
-                player.updatePosition();
-                if (player.getY() > screenHeight)
-                {
-                    fxDeath.Play();
-                    resetGame();
-                }
-                for (int i = 0; i < 4; ++i)
-                {
-                    platforms[i].updatePosition();
-                }
 
-                lavaY = screenHeight - 43 - Math.Sin(timer) * 5;
-                timer += 0.05;
+                    if (unpauseNextFrame) { paused = false; } // Unpauses game
+                    break;
             }
 
             base.Update(gameTime);
@@ -228,59 +301,76 @@ namespace Terri_Fried.Android
 
         protected override void Draw(GameTime gameTime)
         {
-            rt = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
-            GraphicsDevice.SetRenderTarget(rt); // Renders all sprites to rt rather than screen
+            pauseMenu = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
 
-            if (titleScreen)
+            if (!paused)
             {
-                if (splashTimer > 120)
-                {
-                    _spriteBatch.Begin();
-                    GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
+                if (!rt.IsDisposed) { rt.Dispose(); }// Disposes of the RenderTarget (not automatically managed)
+                rt = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+                GraphicsDevice.SetRenderTarget(rt); // Renders all sprites to rt rather than screen
 
-                    _spriteBatch.Draw(logo, new Vector2(screenWidth / 2 - 200, screenHeight / 2 - 45 - 30), Color.White);
-                    _spriteBatch.DrawString(font, highscore, new Vector2(screenWidth / 2 - 37, screenHeight / 2 + 10), Color.Black, 0f, Vector2.Zero, (float)(0.5 * 2) / 3, SpriteEffects.None, 0f);  // (0.5 * 2) / 3 = 32 font size
-                    _spriteBatch.DrawString(font, "CLICK ANYWHERE TO BEGIN", new Vector2(screenWidth / 2 - 134, screenHeight / 2 + 50), new Color(213, 196, 184, 255), 0f, Vector2.Zero, (float)(0.5 * 2) / 3, SpriteEffects.None, 0f);  // (0.5 * 2) / 3 = 32 font size & rgba values changed to 0-255 rgb values because rgba values in main.cpp differed
-                    _spriteBatch.End();
-                }
-                else
-                {
-                    _spriteBatch.Begin();
-                    GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
-                    _spriteBatch.DrawString(font, "POLYMARS", new Vector2(screenWidth / 2 - 54, screenHeight / 2 + 3), new Color(new Vector4(.835f, .502f, .353f, 1.0f)), 0f, Vector2.Zero, (float)(0.5 * 2) / 3, SpriteEffects.None, 0f);  // (0.5 * 2) / 3 = 32 font size
-                    _spriteBatch.Draw(splashEggSprite, new Vector2(screenWidth / 2 - 16, screenHeight / 2 - 16 - 23), Color.White);
-                    _spriteBatch.End();
-                }
-            }
-            else
-            {
                 _spriteBatch.Begin();
-
-                GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
-                if (ex.raylibMouseState.Down && player.isOnGround())
+                switch (titleScreen)
                 {
-                    ex.DrawLineEx(_spriteBatch, new Vector2((float)(mouseDownX + (player.getX() - mouseDownX) + (player.getWidth() / 2)), (float)(mouseDownY + (player.getY() - mouseDownY) + (player.getHeight() / 2))), new Vector2((float)(ex.raylibMouseState.X + (player.getX() - mouseDownX) + (player.getWidth() / 2)), (float)(ex.raylibMouseState.Y + (player.getY() - mouseDownY) + (player.getHeight() / 2))), 3, new Color(new Vector4(.906f, .847f, .788f, 1.0f)));
-                }
+                    case true:
+                        switch (splashTimer > 120)
+                        {
+                            case true:
+                                GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
+                                _spriteBatch.Draw(logoTexture, new Vector2(screenWidth / 2 - 200, screenHeight / 2 - 45 - 30), Color.White);
+                                _spriteBatch.DrawString(font, highscore, new Vector2(screenWidth / 2 - 37, screenHeight / 2 + 10), Color.Black, 0f, Vector2.Zero, 0.5f * (2f / 3), SpriteEffects.None, 0f);  // 0.5f * (2f / 3) = 32 font size
+                                _spriteBatch.DrawString(font, "CLICK ANYWHERE TO BEGIN", new Vector2(screenWidth / 2 - 134, screenHeight / 2 + 50), new Color(213, 196, 184, 255), 0f, Vector2.Zero, 0.5f * (2f / 3), SpriteEffects.None, 0f);
+                                break;
 
-                for (int i = 0; i < 4; ++i)
-                {
-                    _spriteBatch.Draw(platformSprite, new Vector2((float)platforms[i].getX(), (float)platforms[i].getY()), new Color(new Vector4(.698f, .588f, .49f, 1.0f)));
-                    if (platforms[i].getHasCoin())
-                    {
-                        _spriteBatch.Draw(coinSprite, new Vector2(platforms[i].getCoinX(), platforms[i].getCoinY()), Color.White);
-                    }
-                }
-                _spriteBatch.Draw(playerSprite, new Vector2((float)player.getX(), (float)player.getY()), Color.White);
-                _spriteBatch.Draw(lavaSprite, new Vector2(0, (float)lavaY), Color.White);
-                _spriteBatch.Draw(scoreBoxSprite, new Vector2(17, 17), Color.White);
-                _spriteBatch.DrawString(font, score, new Vector2(28, 20), Color.Black, 0f, Vector2.Zero, (float)(1 * 2) / 3, SpriteEffects.None, 0f); // (1 * 2) / 3 = 64 font size   
-                _spriteBatch.DrawString(font, highscore, new Vector2(17, 90), Color.Black, 0f, Vector2.Zero, (float)(0.5 * 2) / 3, SpriteEffects.None, 0f); // (0.5 * 2) / 3 = 32 font size
+                            default:
+                                GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
+                                _spriteBatch.DrawString(font, "POLYMARS", new Vector2(screenWidth / 2 - 54, screenHeight / 2 + 3), new Color(new Vector4(.835f, .502f, .353f, 1.0f)), 0f, Vector2.Zero, 0.5f * (2f / 3), SpriteEffects.None, 0f);  // 0.5f * (2f / 3) = 32 font size
+                                _spriteBatch.Draw(splashEggTexture, new Vector2(screenWidth / 2 - 16, screenHeight / 2 - 16 - 23), Color.White);
+                                break;
+                        }
+                        break;
 
+                    case false:
+                        GraphicsDevice.Clear(new Color(new Vector4(0.933f, 0.894f, 0.882f, 1.0f)));
+                        if (ex.gameRBMouseState.Down && player.isOnGround())
+                        {
+                            ex.DrawLineEx(_spriteBatch, new Vector2((float)(mouseDownX + (player.getX() - mouseDownX) + (player.getWidth() / 2)), (float)(mouseDownY + (player.getY() - mouseDownY) + (player.getHeight() / 2))), new Vector2((float)(ex.gameRBMouseState.X + (player.getX() - mouseDownX) + (player.getWidth() / 2)), (float)(ex.gameRBMouseState.Y + (player.getY() - mouseDownY) + (player.getHeight() / 2))), 3, new Color(new Vector4(.906f, .847f, .788f, 1.0f)));
+                        }
+
+                        for (int i = 0; i < 4; ++i)
+                        {
+                            _spriteBatch.Draw(platformTexture, new Vector2((float)platforms[i].getX(), (float)platforms[i].getY()), new Color(new Vector4(.698f, .588f, .49f, 1.0f)));
+                            if (platforms[i].getHasCoin())
+                            {
+                                _spriteBatch.Draw(coinTexture, new Vector2(platforms[i].getCoinX(), platforms[i].getCoinY()), Color.White);
+                            }
+                        }
+
+                        _spriteBatch.Draw(playerTexture, new Vector2((float)player.getX(), (float)player.getY()), Color.White);
+                        _spriteBatch.Draw(lavaTexture, new Vector2(0, (float)lavaY), Color.White);
+                        _spriteBatch.Draw(scoreBoxTexture, new Vector2(17, 17), Color.White);
+
+                        _spriteBatch.DrawString(font, score, new Vector2(28, 20), Color.Black, 0f, Vector2.Zero, (float)(1 * 2) / 3, SpriteEffects.None, 0f); // (1 * 2) / 3 = 64 font size   
+                        _spriteBatch.DrawString(font, highscore, new Vector2(17, 90), Color.Black, 0f, Vector2.Zero, (float)(0.5 * 2) / 3, SpriteEffects.None, 0f); // (0.5 * 2) / 3 = 32 font size
+
+                        _spriteBatch.Draw(pauseTexture, pauseRect, Color.White);
+                        break;
+                }
                 _spriteBatch.End();
             }
 
-            ex.Draw(GraphicsDevice, _spriteBatch, rt); // Draws the RenderTarget (and therefore, all sprites) to screen
-            rt.Dispose(); // Disposes of the RenderTarget (not automatically managed)
+            GraphicsDevice.SetRenderTarget(pauseMenu);
+            GraphicsDevice.Clear(Color.Transparent);
+
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(fadeTexture, new Rectangle(0, 0, (int)(screenWidth * ex.aspectMultiplier), (int)(screenHeight * ex.aspectMultiplier)), new Rectangle(0, 0, 1, 1), Color.White); // Adds fade effect to screen
+            _spriteBatch.Draw(pauseTexture, pauseRect, Color.White);
+            _spriteBatch.DrawString(font, "PAUSED", new Vector2((screenWidth / 2) - (font.MeasureString("PAUSED").X * (1f / 3)), (screenHeight / 2) - (font.MeasureString("PAUSED").Y * (1f / 3))), Color.Black, 0f, Vector2.Zero, 2f / 3, SpriteEffects.None, 0f);
+            _spriteBatch.End();
+
+            ex.Draw(GraphicsDevice, _spriteBatch, rt, pauseMenu, paused); // Draws the RenderTarget (and therefore, all sprites) to screen
+
+            pauseMenu.Dispose(); // Disposes pause menu
 
             base.Draw(gameTime);
         }
@@ -288,17 +378,19 @@ namespace Terri_Fried.Android
         void addScore(int amount)
         {
             scoreInt += amount;
-            if (scoreInt < 10)
+            switch (scoreInt)
             {
-                score = string.Format("00{0}", scoreInt);
-            }
-            else if (scoreInt < 100)
-            {
-                score = string.Format("0{0}", scoreInt);
-            }
-            else
-            {
-                score = string.Format("{0}", scoreInt);
+                case int n when (n < 10):
+                    score = string.Format("00{0}", scoreInt);
+                    break;
+
+                case int n when (n < 100):
+                    score = string.Format("0{0}", scoreInt);
+                    break;
+
+                default:
+                    score = string.Format("{0}", scoreInt);
+                    break;
             }
             if (scoreInt > highscoreInt)
             {
@@ -306,6 +398,7 @@ namespace Terri_Fried.Android
                 highscore = string.Format("BEST: {0}", highscoreInt);
             }
         }
+
         void resetScore()
         {
             scoreInt = 0;
@@ -321,18 +414,18 @@ namespace Terri_Fried.Android
                 }
             }
         }
-        void resetGame()
+        public void resetGame()
         {
             resetScore();
             for (int i = 0; i < 4; ++i)
             {
                 platforms[i] = new Platform(i, screenWidth, screenHeight);
             }
+
             player.setVelocity(0, 0);
             player.setX((int)platforms[0].getX() + platforms[0].getWidth() / 2 - 26 / 2);
             player.setY((int)platforms[0].getY() - player.getHeight());
         }
-
 
         void checkPlayerCollision()
         {
@@ -358,9 +451,32 @@ namespace Terri_Fried.Android
                         player.setY((int)player.getY() + 1);
                     }
                 }
-
             }
             player.setOnPlatform(onPlatform);
+        }
+
+        public void pauseGame(bool pause) // Whether or not to alternate between paused and unpaused or just pause the game
+        {
+            switch (pause)
+            {
+                case true:
+                    if (!titleScreen) { paused = true; }
+                    break;
+
+                default:
+                    switch (paused)
+                    {
+                        case true:
+                            unpauseNextFrame = true; // Unpauses after the rest of Update() is executed
+                            pauseMouseDown = true;
+                            break;
+
+                        case false:
+                            paused = true;
+                            break;
+                    }
+                    break;
+            }
         }
     }
 }

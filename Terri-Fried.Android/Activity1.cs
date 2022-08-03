@@ -32,5 +32,11 @@ namespace Terri_Fried.Android
             SetContentView(_view);
             _game.Run();
         }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            _game.pauseGame(true); // Pauses the game when not in foreground
+        }
     }
 }

@@ -156,11 +156,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
+      "projectUniqueName": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
       "projectName": "Terri-Fried.Android",
-      "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
+      "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\Terri-Fried.Android.csproj",
       "packagesPath": "C:\\Users\\vukil\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried.Android\\obj\\",
+      "outputPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried.Android\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
@@ -181,8 +181,8 @@
       "frameworks": {
         "monoandroid10.0": {
           "projectReferences": {
-            "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj": {
-              "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-Fried\\Terri-Fried\\Terri-Fried.csproj"
+            "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj": {
+              "projectPath": "C:\\Users\\vukil\\source\\repos\\Terri-FriedE\\Terri-Fried\\Terri-Fried.csproj"
             }
           }
         }
