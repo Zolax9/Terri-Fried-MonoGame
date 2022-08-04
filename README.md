@@ -5,9 +5,12 @@ The DesktopGL platform used in this game "requires at least OpenGL 2.0 with the 
 
 This game is available for Windows (Vista and up), macOS (High Sierra 10.13 and up) and Linux (64-bit only), and Android (armeabi-v7a) with builds available. This game can also be ported to other MonoGame-supported platforms, such as Android (done here) and iOS, with other target platforms.
 
-# Differences
+# Accurate
+This branch tries to replicate the original as much as possible, so may be less ideal for gameplay. As such, this branch will receive little development to focus on the [enhanced branch](https://github.com/Zolax9/Terri-Fried-MonoGame/tree/enhanced), which will receive better compatibility and additional features.
 
-The main difference between the older version [here](https://github.com/Zolax9/Terri-Fried-MonoGame-Old) is the implementation of an 'Extra' class that contains any extra functionality not available in MonoGame to allow for minimal changes to the base game code. The Android build also has quite a bit of extra code to fit the game into the phone screen rather than an arbitrary 800x450 screen resolution.
+# Differences
+The Android build has quite a bit of extra code to fit the game into the phone screen rather than an arbitrary 800x450 screen resolution.
+The main difference between the older version [here](https://github.com/Zolax9/Terri-Fried-MonoGame-Old) is the implementation of an 'Extra' class that contains any extra functionality not available in MonoGame to allow for minimal changes to the base game code.
 
 # Screenshots
 # Windows (DesktopGL)
